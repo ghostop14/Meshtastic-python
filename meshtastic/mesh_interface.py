@@ -81,6 +81,15 @@ class MeshInterface:
             myinfo = f"\nMy info: {stripnl(MessageToJson(self.myInfo))}"
         mesh = "\nNodes in mesh:"
         nodes = ""
+
+        myNodePositionInfo = ''
+
+        myNodePosition = self.getMyNodeInfo()
+        myPosition = stripnl(str(myNodePosition['position']))
+        
+        if len(myPosition) > 2:
+            myNodePositionInfo = f"\n\nFixed Position: {myPosition}"
+            
         if self.nodes:
             for n in self.nodes.values():
                 # when the TBeam is first booted, it sometimes shows the raw data
@@ -96,7 +105,7 @@ class MeshInterface:
                     n2['user']['macaddr'] = addr
 
                 nodes = nodes + f"  {stripnl(n2)}"
-        infos = owner + myinfo + mesh + nodes
+        infos = owner + myinfo + myNodePositionInfo + "\n" + mesh + "\n" + nodes
         print(infos)
         return infos
 
@@ -354,7 +363,7 @@ class MeshInterface:
 
         toRadio.packet.CopyFrom(meshPacket)
         if self.noProto:
-            logging.warning(f"Not sending packet because protocol use is disabled by noProto")
+            logging.warning("Not sending packet because protocol use is disabled by noProto")
         else:
             logging.debug(f"Sending packet: {stripnl(meshPacket)}")
             self._sendToRadio(toRadio)
@@ -464,7 +473,7 @@ class MeshInterface:
     def _sendToRadio(self, toRadio):
         """Send a ToRadio protobuf to the device"""
         if self.noProto:
-            logging.warning(f"Not sending packet because protocol use is disabled by noProto")
+            logging.warning("Not sending packet because protocol use is disabled by noProto")
         else:
             #logging.debug(f"Sending toRadio: {stripnl(toRadio)}")
             self._sendToRadioImpl(toRadio)

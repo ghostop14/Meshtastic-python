@@ -563,12 +563,22 @@ def onConnected(interface):
                 found = getPref(localConfig, pref[0])
                 if not found:
                     found = getPref(moduleConfig, pref[0])
+                if not found:
+                    name = splitCompoundName(pref[0])
+                    if len(name) > 1:
+                        nodeConfig = interface.getMyNodeInfo()
+                        if name[0] in nodeConfig and name[1] in nodeConfig[name[0]]:
+                            found = True
+                            print(f"{pref[0]}: {str(nodeConfig[name[0]][name[1]])}")
+                            logging.debug(f"{pref[0]}: {str(nodeConfig[name[0]][name[1]])}")
+                        else:
+                            found = False
 
             if not found:
                 if Globals.getInstance().get_camel_case():
-                    print(f"{localConfig.__class__.__name__} and {moduleConfig.__class__.__name__} do not have an attribute {pref[0]}.")
+                    print(f"{localConfig.__class__.__name__},  {moduleConfig.__class__.__name__}, and node do not have an attribute {pref[0]}.")
                 else:
-                    print(f"{localConfig.__class__.__name__} and {moduleConfig.__class__.__name__} do not have attribute {pref[0]}.")
+                    print(f"{localConfig.__class__.__name__},  {moduleConfig.__class__.__name__}, and node do not have attribute {pref[0]}.")
 
             print("Completed getting preferences")
 
